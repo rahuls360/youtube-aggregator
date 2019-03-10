@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Channel from "./components/Channel";
 import Pagination from "react-js-pagination";
+import Axios from "axios";
 
 import "bootstrap/dist/css/bootstrap.css";
 if (typeof window !== "undefined") {
@@ -15,20 +16,18 @@ class App extends Component {
   };
 
   componentWillMount() {
-    var csvFilePath = require("./data.csv");
-    var Papa = require("papaparse/papaparse.min.js");
-    Papa.parse(csvFilePath, {
-      header: true,
-      download: true,
-      skipEmptyLines: true,
-      complete: this.updateData
-    });
+    this.updateData();
   }
 
   updateData = result => {
-    const data = result.data;
-    this.setState({ data: data });
-    console.log("data updated");
+    Axios.get("https://youtube-aggregator.herokuapp.com/")
+      .then(data => {
+        this.setState({ data: data.data.response });
+        console.log("data updated");
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   handlePageChange = pageNumber => {
