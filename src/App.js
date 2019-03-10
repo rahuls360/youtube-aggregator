@@ -1,25 +1,31 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
 
 class App extends Component {
+  state = {
+    data: {}
+  };
+
+  componentWillMount() {
+    var csvFilePath = require("./data.csv");
+    var Papa = require("papaparse/papaparse.min.js");
+    Papa.parse(csvFilePath, {
+      header: true,
+      download: true,
+      skipEmptyLines: true,
+      complete: this.updateData
+    });
+  }
+
+  updateData = result => {
+    const data = result.data;
+    this.setState({ data: data });
+    console.log(data);
+  };
+
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <h1>hi</h1>
       </div>
     );
   }
