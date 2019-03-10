@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Channel from "./components/Channel";
+import Pagination from "react-js-pagination";
 
 import "bootstrap/dist/css/bootstrap.css";
 if (typeof window !== "undefined") {
@@ -9,7 +10,8 @@ if (typeof window !== "undefined") {
 
 class App extends Component {
   state = {
-    data: {}
+    data: {},
+    activePage: 1
   };
 
   componentWillMount() {
@@ -26,10 +28,28 @@ class App extends Component {
   updateData = result => {
     const data = result.data;
     this.setState({ data: data });
-    console.log(data);
+    console.log("data updated");
+  };
+
+  handlePageChange = pageNumber => {
+    console.log(`active page is ${pageNumber}`);
+    this.setState({ activePage: pageNumber });
   };
 
   render() {
+    let result = [];
+    const n = 10; //number of channels per page
+    if (this.state.data[0] !== undefined) {
+      for (
+        let i = (this.state.activePage - 1) * n;
+        i <= n * this.state.activePage - 1;
+        i++
+      ) {
+        result.push(
+          <Channel channelData={this.state.data[i]} key={i} index={i} />
+        );
+      }
+    }
     return (
       <div className="App">
         <h1 className="text-center">List of Channels</h1>
@@ -56,16 +76,15 @@ class App extends Component {
               </div>
             </div>
           </div>
-          {Object.keys(this.state.data).map(key => {
-            return (
-              <Channel
-                channelData={this.state.data[key]}
-                key={key}
-                index={key}
-              />
-            );
-          })}
+          {result}
         </div>
+        <Pagination
+          activePage={this.state.activePage}
+          itemsCountPerPage={10}
+          totalItemsCount={5000}
+          pageRangeDisplayed={5}
+          onChange={this.handlePageChange}
+        />
       </div>
     );
   }
